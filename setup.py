@@ -9,7 +9,7 @@ setup(
     name = 'pyEcovent',
     packages = ['ecovent'],
     version='0.8.0',
-    description='Python3 library for single-room energy recovery ventilators from Vents / Blauberg',
+    description='Python3 library for single-room energy recovery ventilators from Vents / Blauberg / Flexit',
     long_description=long_description,
     python_requires='>=3.6.7',
     author='Aleksander Lehmann',
