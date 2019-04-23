@@ -6,7 +6,36 @@ Python3 library for single-room energy recovery ventilators from Vents / Blauber
 	pip3 install pyEcovent
 
 ## Example usage
-	Example will follow
+	from pyEcovent.ecovent import Fan
+
+	""" Create a new fan with IP Address """
+	fan=Fan("172.16.10.40")
+
+	""" Update the current values of the fan """
+	fan.update()
+
+
+	""" Print the current set values """
+	print(fan.state)
+	print(fan.speed)
+	print(fan.man_speed)
+	print(fan.airflow)
+
+	""" Set speed to medium """
+	fan.set_speed(2)
+	print(fan.speed)
+
+	""" Toggle fan state """
+	fan.set_state()
+	print(fan.state)
+
+	""" Set manual speed """
+	fan.set_man_speed(123)
+	print(fan.man_speed)
+
+	""" Set airflow to """
+	fan.set_airflow(3)
+	print(fan.airflow)
 
 ## Intended usage
 The intended usage of this library is to include ventilation fans from Vents / Blauberg / Flexit in <https://www.home-assistant.io/>
