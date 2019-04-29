@@ -29,12 +29,12 @@ Python3 library for single-room energy recovery ventilators from Vents / Blauber
 	fan.set_state()
 	print(fan.state)
 
-	""" Set manual speed """
+	""" Set manual speed to 123 """
 	fan.set_man_speed(123)
 	print(fan.man_speed)
 
-	""" Set airflow to """
-	fan.set_airflow(3)
+	""" Set airflow to 'Air Supply' """
+	fan.set_airflow(1)
 	print(fan.airflow)
 
 ## Intended usage
