@@ -47,8 +47,6 @@ class Fan(object):
             cmd = bytes.fromhex('0300')
             self.send(cmd)
             self.socket.close()
-        else:
-           print("No action required")
 
         self.update()
 
