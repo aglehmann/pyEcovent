@@ -1,6 +1,6 @@
 """ __init__.py """
 """ Version  """
-__version__ = "0.8.0"
+__version__ = "0.8.1"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
