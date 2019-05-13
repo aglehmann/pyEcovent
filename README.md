@@ -6,8 +6,7 @@ Python3 library for single-room energy recovery ventilators from Vents / Blauber
 	pip3 install pyEcovent
 
 ## Example usage
-	from pyEcovent.ecovent import Fan
-
+	from ecovent import Fan
 	""" Create a new fan with IP Address """
 	fan=Fan("192.168.0.22")
 
