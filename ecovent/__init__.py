@@ -39,10 +39,29 @@ class Fan(object):
         self.parse_response(response[6:])
         self.socket.close()
 
-    def set_state(self):
-        cmd = bytes.fromhex('0300')
-        self.send(cmd)
-        self.socket.close()
+    def set_state_on(self):
+        if self.state == 'unknown':
+            self.update()
+
+        if self.state ==  'off':
+            cmd = bytes.fromhex('0300')
+            self.send(cmd)
+            self.socket.close()
+        else:
+           print("No action required")
+
+        self.update()
+
+    def set_state_off(self):
+        if self.state == 'unknown':
+            self.update()
+
+        if self.state ==  'on':
+            cmd = bytes.fromhex('0300')
+            self.send(cmd)
+            self.socket.close()
+        else:
+           print("No action required")
 
         self.update()
 
