@@ -146,7 +146,7 @@ class Fan(object):
 
     @property
     def port(self):
-        return selv._port
+        return self._port
 
     @property
     def state(self):
