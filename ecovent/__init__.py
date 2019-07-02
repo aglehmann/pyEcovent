@@ -12,7 +12,7 @@ class Fan(object):
     HEADER = bytes.fromhex('6D6F62696C65')
     FOOTER = bytes.fromhex('0D0A')
 
-    def __init__(self, name="ecofan", host, port=4000):
+    def __init__(self, host, name="ecofan", port=4000):
         self._name = name
         self._host = host
         self._port = port
