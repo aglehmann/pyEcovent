@@ -1,6 +1,6 @@
 """ __init__.py """
 """ Version  """
-__version__ = "0.8.1"
+__version__ = "0.8.2"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -12,7 +12,8 @@ class Fan(object):
     HEADER = bytes.fromhex('6D6F62696C65')
     FOOTER = bytes.fromhex('0D0A')
 
-    def __init__(self, host, port=4000):
+    def __init__(self, name="ecofan", host, port=4000):
+        self._name = name
         self._host = host
         self._port = port
         self._fan_state = None
@@ -131,6 +132,10 @@ class Fan(object):
                 self.man_speed = pair[1][0]
             elif pair[0] == 6:
                 self.airflow = pair[1][0]
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def host(self):
