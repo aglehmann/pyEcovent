@@ -8,12 +8,14 @@ Python3 library for single-room energy recovery ventilators from Vents / Blauber
 ## Example usage
 	from ecovent import Fan
 	""" Create a new fan with IP Address """
-	""" The Fan object takes 'name', 'host', 'port' as arguments """
+	""" The Fan object takes 'host', 'name', 'port' as arguments """
 	""" 'host' (IP address) is the only mandatory argument """
+	""" 'name' is optional and will default to ecofan """
+	""" 'port' is also optional and will default to 4000 """"
 	fan=Fan("192.168.0.22")
 	
 	""" Optinally create a Fan with a name  
-	fan=Fan("Cellar fan","192.168.0.22")
+	fan=Fan("192.168.0.22", "Cellar Fan")
 
 	""" Update the current values of the fan """
 	fan.update()
