@@ -1,11 +1,10 @@
 """ __init__.py """
 """ Version  """
-__version__ = "0.8.2"
+__version__ = "0.8.3"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
 import sys
-
 
 class Fan(object):
     """Class to communicate with the ecofan"""
