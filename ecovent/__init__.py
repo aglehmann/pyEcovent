@@ -19,6 +19,7 @@ class Fan(object):
         self._fan_speed = None
         self._fan_man_speed = None
         self._fan_airflow = None
+        self._fan_humidity = None
 
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -123,6 +124,7 @@ class Fan(object):
         }
 
         for pair in self.parsebytes(data, fan_params):
+            print(pair)
             if pair[0] == 3:
                 self.state = pair[1][0]
             elif pair[0] == 4:
@@ -131,6 +133,8 @@ class Fan(object):
                 self.man_speed = pair[1][0]
             elif pair[0] == 6:
                 self.airflow = pair[1][0]
+            elif pair[0] == 8:
+                self.humidity = pair[1][0]
 
     @property
     def name(self):
@@ -207,3 +211,15 @@ class Fan(object):
             self._fan_airflow = "air supply"
         else:
             self._fan_airflow = "unknown"
+
+    @property
+    def humidity(self):
+        return self._fan_humidity
+
+    @humidity.setter
+    def humidity(self, val):
+        print(val)
+        if val >= 40 and val <= 80:
+            self._fan_humidity = val
+        else:
+            self._fan_humidity = None
