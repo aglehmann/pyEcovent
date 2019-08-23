@@ -1,1 +1,3 @@
+./.gitignore
 ecovent/__pycache__/
+ecovent/__init__.pyc
