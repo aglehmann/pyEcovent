@@ -1,6 +1,6 @@
 """ __init__.py """
 """ Version  """
-__version__ = "0.8.3"
+__version__ = "0.8.4"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -32,13 +32,22 @@ class Fan(object):
         return self.socket.send(Fan.HEADER + data + Fan.FOOTER)
 
     def receive(self):
-        return self.socket.recv(98)
+        try:
+            response = self.socket.recv(98)
+            return response
+        except socket.timeout:
+            return None
 
     def update(self):
         self.send(bytes.fromhex('0100'))
         response = self.receive()
-        self.parse_response(response[6:])
-        self.socket.close()
+        if response:
+            self.parse_response(response[6:])
+            self.socket.close()
+            return 0
+        else:
+            return 1
+
 
     def set_state_on(self):
         if self.state == 'unknown':
@@ -59,8 +68,6 @@ class Fan(object):
             cmd = bytes.fromhex('0300')
             self.send(cmd)
             self.socket.close()
-        else:
-           print("No action required")
 
         self.update()
 
@@ -124,7 +131,6 @@ class Fan(object):
         }
 
         for pair in self.parsebytes(data, fan_params):
-            print(pair)
             if pair[0] == 3:
                 self.state = pair[1][0]
             elif pair[0] == 4:
@@ -218,7 +224,6 @@ class Fan(object):
 
     @humidity.setter
     def humidity(self, val):
-        print(val)
         if val >= 40 and val <= 80:
             self._fan_humidity = val
         else:
