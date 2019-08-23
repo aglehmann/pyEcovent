@@ -26,6 +26,7 @@ Python3 library for single-room energy recovery ventilators from Vents / Blauber
 	print(fan.speed)
 	print(fan.man_speed)
 	print(fan.airflow)
+	print(fan.humidity)
 
 	""" Set speed to medium (low=1 / medium=2 / high=3) """
 	fan.set_speed(2)
