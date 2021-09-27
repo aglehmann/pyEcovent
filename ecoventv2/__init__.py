@@ -5,6 +5,7 @@ __version__ = "0.8.4"
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
 import sys
+import time
 
 class Fan(object):
     """Class to communicate with the ecofan"""
@@ -142,6 +143,8 @@ class Fan(object):
         self._fan_humidity_status = None # Fan.status[self.read_param(Fan.prmt['humidity_status'])]
         self._fan_analogV_status = None # Fan.status[self.read_param(Fan.prmt['analogV_status'])]
 
+        self.update_all()
+
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.settimeout(4)
@@ -186,6 +189,17 @@ class Fan(object):
 
     def read_param(self, parameter ):
         data = Fan.func['read'] + parameter
+        time.sleep(0.01)
+        self.send(data)
+        response = self.receive()
+        if response:
+            return self.parse_response(response)
+        else:
+            return 0
+
+    def update_all(self):
+        print ("Update all")
+        data = Fan.func['read'] + Fan.prmt['state'] + Fan.prmt['speed'] + Fan.prmt['boost_status'] + Fan.prmt['timer_mode'] + Fan.prmt['timer_counter'] + Fan.prmt['humidity_sensor_state'] + Fan.prmt['relay_sensor_state']
         self.send(data)
         response = self.receive()
         if response:
@@ -275,6 +289,10 @@ class Fan(object):
         pointer += pwd_size
         function = data[pointer]
         pointer += 1
+        # od tukaj parsamo parametre
+        payload=data[pointer:length]
+        for p in payload:
+            print (hex(p).replace("0x","").zfill(2))
         parameter = data[pointer]
         pointer += 1
         payload = data[pointer:length]
