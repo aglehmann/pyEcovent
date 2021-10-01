@@ -143,7 +143,8 @@ class Fan(object):
         self._fan_humidity_status = None # Fan.status[self.read_param(Fan.prmt['humidity_status'])]
         self._fan_analogV_status = None # Fan.status[self.read_param(Fan.prmt['analogV_status'])]
 
-        self.update_all()
+        # self.update_all()
+        # self.read_param('000B')
 
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -187,7 +188,14 @@ class Fan(object):
         except socket.timeout:
             return None
 
-    def read_param(self, parameter ):
+    def read_param(self, input ):
+        out = ""
+        parameter = ""
+        for i in range (0,len(input), 4):
+            out = input[i:(i+4)] ;
+            if out[:2] != "00":
+                out = "ff" + out ;
+            parameter += out ;
         data = Fan.func['read'] + parameter
         time.sleep(0.01)
         self.send(data)
@@ -291,11 +299,53 @@ class Fan(object):
         pointer += 1
         # od tukaj parsamo parametre
         payload=data[pointer:length]
+        parameter = 0 
+        response = bytearray()
+        ext_function = 0
+        value_counter = 1
+        print (payload.hex())
         for p in payload:
-            print (hex(p).replace("0x","").zfill(2))
+            # print (hex(p)) #.replace("0x","").zfill(2))
+            if value_counter < 0:
+                parameter = 0
+                response.append(0xff)
+            
+            if p == 0xff:
+                ext_function = 0xff
+
+            elif p == 0xfe:
+                ext_function = 0xfe
+
+            elif p == 0xfd:
+                ext_function = 0xfd
+
+            else:
+                if ext_function == 0xff:
+                    response.append(p)
+                    parameter = 1
+
+                elif ext_function == 0xfe:
+                    value_counter = p 
+                    
+                elif ext_function == 0xfd:
+                    parameter = 0
+                    value_counter = 1
+
+                else:
+                    if ( parameter == 0 ):
+                        response.append(0x00)
+                        parameter=1
+                        
+                    response.append(p)
+                    value_counter -= 1
+
+                ext_function = 0x00
+            
         parameter = data[pointer]
         pointer += 1
         payload = data[pointer:length]
+        print ( response.hex() )
+
         return payload.hex()
         
 
