@@ -107,41 +107,41 @@ class Fan(object):
         self._fan_id = fan_id
         self._pwd_size = 0
         self._password = password
-        self._fan_state = Fan.status[self.read_param(Fan.prmt['state'])]
-        self._fan_speed = Fan.speeds[self.read_param(Fan.prmt['speed'])]
-        self._fan_boost_status = Fan.status[self.read_param(Fan.prmt['boost_status'])]
-        self._fan_timer_mode = Fan.timer_mode[self.read_param(Fan.prmt['timer_mode'])]
-        self._fan_timer_counter = None
-        self._fan_humidity_sensor_state = Fan.status[self.read_param(Fan.prmt['humidity_sensor_state'])]
-        self._fan_relay_sensor_state = Fan.status[self.read_param(Fan.prmt['relay_sensor_state'])]
-        self._fan_analogV_sensor_state = Fan.status[self.read_param(Fan.prmt['analogV_sensor_state'])]
-        self._fan_humidity_treshold = int(self.read_param(Fan.prmt['humidity_treshold']),16)
-        self._fan_battery_voltage = None # int(self.read_param(Fan.prmt['battery_voltage']),16)
-        self._fan_humidity = int(self.read_param(Fan.prmt['humidity']),16)
-        self._fan_analogV = int(self.read_param(Fan.prmt['analogV']),16)
-        self._fan_relay_value = Fan.status[self.read_param(Fan.prmt['relay_value'])]
-        self._fan_man_speed = int(int(self.read_param(Fan.prmt['man_speed']),16)/255*100)
-        self._fan_fan1_speed = None
-        self._fan_fan2_speed = None
-        self._fan_filter_timer_countdown = None
-        self._fan_boost_time = int(self.read_param(Fan.prmt['boost_time']),16)
-        self._fan_rtc_time = None
-        self._fan_rtc_date = None
-        self._fan_weekly_schedule_state = Fan.status[self.read_param(Fan.prmt['weekly_schedule_state'])]
-        self._fan_schedule_setup = None
-        self._fan_machine_hours = None
-        self._fan_alarm_state = Fan.alarms[self.read_param(Fan.prmt['alarm_state'])]
-        self._fan_cloud_server_state = Fan.status[self.read_param(Fan.prmt['cloud_server_state'])]
-        self._fan_firmware = None
-        self._fan_filter_replacement_state = Fan.status[self.read_param(Fan.prmt['filter_replacement_state'])]
-        self._fan_curent_wifi_ip = None
-        self._fan_airflow = Fan.airflows[self.read_param(Fan.prmt['airflow'])]
-        self._fan_analogV_treshold = int(int(self.read_param(Fan.prmt['analogV_treshold']),16)/255*100)
-        self._fan_unit_type = None # Fan.unit_types[self.read_param(Fan.prmt['unit_type'])]
-        self._fan_night_mode_timer = None 
-        self._fan_party_mode_timer = None
-        self._fan_humidity_status = None # Fan.status[self.read_param(Fan.prmt['humidity_status'])]
-        self._fan_analogV_status = None # Fan.status[self.read_param(Fan.prmt['analogV_status'])]
+#        self._fan_state = Fan.status[self.read_param(Fan.prmt['state'])]
+#        self._fan_speed = Fan.speeds[self.read_param(Fan.prmt['speed'])]
+#        self._fan_boost_status = Fan.status[self.read_param(Fan.prmt['boost_status'])]
+#        self._fan_timer_mode = Fan.timer_mode[self.read_param(Fan.prmt['timer_mode'])]
+#        self._fan_timer_counter = None
+#        self._fan_humidity_sensor_state = Fan.status[self.read_param(Fan.prmt['humidity_sensor_state'])]
+#        self._fan_relay_sensor_state = Fan.status[self.read_param(Fan.prmt['relay_sensor_state'])]
+#        self._fan_analogV_sensor_state = Fan.status[self.read_param(Fan.prmt['analogV_sensor_state'])]
+#        self._fan_humidity_treshold = int(self.read_param(Fan.prmt['humidity_treshold']),16)
+#        self._fan_battery_voltage = None # int(self.read_param(Fan.prmt['battery_voltage']),16)
+#        self._fan_humidity = int(self.read_param(Fan.prmt['humidity']),16)
+#        self._fan_analogV = int(self.read_param(Fan.prmt['analogV']),16)
+#        self._fan_relay_value = Fan.status[self.read_param(Fan.prmt['relay_value'])]
+#        self._fan_man_speed = int(int(self.read_param(Fan.prmt['man_speed']),16)/255*100)
+#        self._fan_fan1_speed = None
+#        self._fan_fan2_speed = None
+#        self._fan_filter_timer_countdown = None
+#        self._fan_boost_time = int(self.read_param(Fan.prmt['boost_time']),16)
+#        self._fan_rtc_time = None
+#        self._fan_rtc_date = None
+#        self._fan_weekly_schedule_state = Fan.status[self.read_param(Fan.prmt['weekly_schedule_state'])]
+#        self._fan_schedule_setup = None
+#        self._fan_machine_hours = None
+#        self._fan_alarm_state = Fan.alarms[self.read_param(Fan.prmt['alarm_state'])]
+#        self._fan_cloud_server_state = Fan.status[self.read_param(Fan.prmt['cloud_server_state'])]
+#        self._fan_firmware = None
+#        self._fan_filter_replacement_state = Fan.status[self.read_param(Fan.prmt['filter_replacement_state'])]
+#        self._fan_curent_wifi_ip = None
+#        self._fan_airflow = Fan.airflows[self.read_param(Fan.prmt['airflow'])]
+#        self._fan_analogV_treshold = int(int(self.read_param(Fan.prmt['analogV_treshold']),16)/255*100)
+#        self._fan_unit_type = None # Fan.unit_types[self.read_param(Fan.prmt['unit_type'])]
+#        self._fan_night_mode_timer = None 
+#        self._fan_party_mode_timer = None
+#        self._fan_humidity_status = None # Fan.status[self.read_param(Fan.prmt['humidity_status'])]
+#        self._fan_analogV_status = None # Fan.status[self.read_param(Fan.prmt['analogV_status'])]
 
         # self.update_all()
         # self.read_param('000B')
@@ -189,6 +189,8 @@ class Fan(object):
             return None
 
     def read_param(self, input ):
+        print ( "input" )
+        print ( input )
         out = ""
         parameter = ""
         for i in range (0,len(input), 4):
@@ -299,53 +301,54 @@ class Fan(object):
         pointer += 1
         # od tukaj parsamo parametre
         payload=data[pointer:length]
-        parameter = 0 
         response = bytearray()
         ext_function = 0
         value_counter = 1
+        high_byte_value = 0
+        parameter = 1 ;
+        print ("payload:" )
         print (payload.hex())
         for p in payload:
             # print (hex(p)) #.replace("0x","").zfill(2))
-            if value_counter < 0:
-                parameter = 0
-                response.append(0xff)
-            
-            if p == 0xff:
+            # print ( "par: " + str(parameter) + " count: " + str(value_counter) + " ext: " + hex (ext_function) )
+            if parameter and p == 0xff:
                 ext_function = 0xff
-
-            elif p == 0xfe:
+                # print ( "def ext:" + hex(0xff) )
+            elif parameter and p == 0xfe:
                 ext_function = 0xfe
-
-            elif p == 0xfd:
+                # print ( "def ext:" + hex(0xfe) )
+            elif parameter and p == 0xfd:
                 ext_function = 0xfd
-
+                # print ( "dev ext:" + hex(0xfd) )
             else:
                 if ext_function == 0xff:
-                    response.append(p)
-                    parameter = 1
-
+                    high_byte_value = p
+                    ext_function = 1
                 elif ext_function == 0xfe:
-                    value_counter = p 
-                    
+                    value_counter = p
+                    ext_function = 2
                 elif ext_function == 0xfd:
-                    parameter = 0
-                    value_counter = 1
-
+                    None
                 else:
-                    if ( parameter == 0 ):
-                        response.append(0x00)
-                        parameter=1
-                        
+                    if ( parameter == 1 ):
+                        # print ("appending: " + hex(high_byte_value))
+                        response.append(high_byte_value)
+                        parameter = 0
+                    else:
+                        value_counter -= 1
                     response.append(p)
-                    value_counter -= 1
 
-                ext_function = 0x00
-            
+            if value_counter <= 0:
+                parameter = 1
+                value_counter = 1
+                high_byte_value = 0
+                print ( response.hex() )
+                response = bytearray()           
+
         parameter = data[pointer]
         pointer += 1
         payload = data[pointer:length]
-        print ( response.hex() )
-
+#        print ( response.hex() )
         return payload.hex()
         
 
