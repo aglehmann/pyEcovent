@@ -218,7 +218,7 @@ class Fan(object):
             return 0
 
     def update_all(self):
-        print ("Update all")
+        # print ("Update all")
         data = Fan.func['read'] + Fan.prmt['state'] + Fan.prmt['speed'] + Fan.prmt['boost_status'] + Fan.prmt['timer_mode'] + Fan.prmt['timer_counter'] + Fan.prmt['humidity_sensor_state'] + Fan.prmt['relay_sensor_state']
         self.send(data)
         response = self.receive()
@@ -301,9 +301,9 @@ class Fan(object):
             yield(param,value)
 
     def parse_response(self,data):
-        pointer = 20 ;
+        pointer = 20 ; # discard header bytes 
         length = len(data) - 2 ;
-        pwd_size = data[pointer]
+        pwd_size = data[pointer] 
         pointer += 1
         password = data[pointer:pwd_size]
         pointer += pwd_size
@@ -316,7 +316,7 @@ class Fan(object):
         value_counter = 1
         high_byte_value = 0
         parameter = 1 ;
-        print ("payload:" + str (payload.hex()))
+        # print ("payload:" + str (payload.hex()))
         for p in payload:
             # print (hex(p)) #.replace("0x","").zfill(2))
             # print ( "par: " + str(parameter) + " count: " + str(value_counter) + " ext: " + hex (ext_function) )
@@ -352,12 +352,9 @@ class Fan(object):
                 value_counter = 1
                 high_byte_value = 0
                 print ( response.hex() )
-                response = bytearray()           
+                response = bytearray()
 
-        parameter = data[pointer]
-        pointer += 1
         payload = data[pointer:length]
-#        print ( response.hex() )
         return payload.hex()
         
 
