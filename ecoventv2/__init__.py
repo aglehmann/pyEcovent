@@ -38,7 +38,7 @@ class Fan(object):
     prmt['fan1_speed'] = "004A"
     prmt['fan2_speed'] = "004B"
     prmt['filter_timer_countdown'] = "0064"
-    prmt['filter_timer_reset'] = "0065"    
+    prmt['filter_timer_reset'] = "0065" 
     prmt['boost_time'] = "0066"
     prmt['rtc_time'] = "006F"
     prmt['rtc_date'] = "0070"
@@ -53,6 +53,17 @@ class Fan(object):
     prmt['firmware'] = "0086"
     prmt['factory_reset'] = "0087"
     prmt['filter_replacement_state'] = "0088"
+    prmt['wifi_operation_mode'] = "0094"
+    prmt['wifi_name'] = "0095"
+    prmt['wifi_pasword'] = "0096"
+    prmt['wifi_enc_type'] = "0099"
+    prmt['wifi_freq_chnnel'] = "009A"
+    prmt['wifi_dhcp'] = "009B"
+    prmt['wifi_assigned_ip'] = "009C"
+    prmt['wifi_assigned_netmask'] = "009D"
+    prmt['wifi_main_gateway'] = "009E"
+    prmt['wifi_apply_adn_quit'] = "00A0"
+    prmt['wifi_discard_adn_quit'] = "00A2"
     prmt['curent_wifi_ip'] = "00A3"
     prmt['airflow'] = "00B7"
     prmt['analogV_treshold'] = "00B8"
@@ -189,8 +200,7 @@ class Fan(object):
             return None
 
     def read_param(self, input ):
-        print ( "input" )
-        print ( input )
+        print ( "input: " + str(input) )
         out = ""
         parameter = ""
         for i in range (0,len(input), 4):
@@ -306,8 +316,7 @@ class Fan(object):
         value_counter = 1
         high_byte_value = 0
         parameter = 1 ;
-        print ("payload:" )
-        print (payload.hex())
+        print ("payload:" + str (payload.hex()))
         for p in payload:
             # print (hex(p)) #.replace("0x","").zfill(2))
             # print ( "par: " + str(parameter) + " count: " + str(value_counter) + " ext: " + hex (ext_function) )
