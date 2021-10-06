@@ -299,7 +299,7 @@ class Fan(object):
         pointer += pwd_size
         function = data[pointer]
         pointer += 1
-        # od tukaj parsamo parametre
+        # from here parsing of parameters begin
         payload=data[pointer:length]
         response = bytearray()
         ext_function = 0
