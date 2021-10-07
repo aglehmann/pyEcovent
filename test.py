@@ -14,3 +14,7 @@ fan.read_param(request)
 # request = b'\xFE\x06\x77'
 # request = "0077"
 # fan.read_param(request);
+
+for param in fan.params:
+ print ( fan.params[param][0] + ": " + str(getattr ( fan, fan.params[param][0])))
+
