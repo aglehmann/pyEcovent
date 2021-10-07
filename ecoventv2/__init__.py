@@ -20,7 +20,12 @@ class Fan(object):
         'dec': "05",
         'resp': "06"
     }
-    states = ['off', 'on' , 'togle']
+    states = {
+        0: 'off',
+        1: 'on' ,
+        2: 'togle'
+    }
+
     speeds = {
          1: 'low', 
          2: 'medium', 
@@ -28,26 +33,56 @@ class Fan(object):
          0xff: 'manual'
     }
 
-    timer_modes = [ 'off', 'night', 'party' ]
-    statuses = [ 'off', 'on' ]
-    airflows = [ 'ventilation', 'heat recovery', 'supply' ]
-    alarms = [ 'no', 'alarm', 'warning' ]
-    filters = [ 'filter replacement not required' , 'replace filter' ]
+    timer_modes = {
+        0: 'off', 
+        1: 'night', 
+        2: 'party' 
+    }
+
+    statuses = {
+        0: 'off', 
+        1: 'on' 
+    }
+
+    airflows = {
+        0: 'ventilation',
+        1: 'heat recovery', 
+        2: 'supply' 
+    } 
+
+    alarms = {
+        0: 'no', 
+        1: 'alarm', 
+        2: 'warning' 
+    }
+
+    filters = {
+        0: 'filter replacement not required' , 
+        1: 'replace filter' 
+    }
+    
     unit_types = {
                     0x0300: 'Vento Expert A50-1/A85-1/A100-1 W V.2', 
                     0x0400: 'Vento Expert Duo A30-1 W V.2', 
                     0x0500: 'Vento Expert A30 W V.2' }
+
     wifi_operation_modes = {
         1: 'client' ,
         2: 'ap' 
     }
+
     wifi_enc_types =  {  
             48: 'Open', 
             50: 'wpa-psk' , 
             51: 'wpa2_psk',  
             52: 'wpa_wpa2_psk' 
     } 
-    wifi_dhcps = [ 'STATIC', 'DHCP', 'Invert' ]
+
+    wifi_dhcps = {
+        0: 'STATIC', 
+        1: 'DHCP', 
+        2: 'Invert' 
+    }
     
     params = {
         0x0001: [ 'state', states ],
@@ -71,7 +106,6 @@ class Fan(object):
         0x006f: [ 'rtc_time', None ],
         0x0070: [ 'rtc_date', None ],
         0x0072: [ 'weekly_schedule_state', states ],
-
         0x007c: [ 'device_search', None ],
         0x007d: [ 'device_password', None ],
         0x007e: [ 'machine_hours', None ],
@@ -94,9 +128,9 @@ class Fan(object):
         0x00b9: [ 'unit_type', unit_types ],
         0x0302: [ 'night_mode_timer', None ],
         0x0303: [ 'party_mode_timer', None ],
-        0x0303: [ 'party_mode_timer', None ],
         0x0304: [ 'humidity_status', statuses ],
-        0x0305: [ 'analogV_status', statuses ]
+        0x0305: [ 'analogV_status', statuses ],
+        0x0077: [ 'weekly_schedule_setup', None ]
     }
 
     write_only_params = {
@@ -117,7 +151,7 @@ class Fan(object):
         self._pwd_size = 0
         self._password = password
         
-        self.update()
+        # self.update()
 
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -151,6 +185,22 @@ class Fan(object):
         str = f"{self._type}{id_size}{id}{pwd_size}{password}"
         return str
 
+    def get_params_index(self, value):
+        for i in ( self.params ):
+            if self.params[i][0] == value:
+                return i
+                
+    def get_params_values(self, idx, value ):
+        index = self.get_params_index(idx)
+        if index != None:
+            if self.params[index][1] != None:
+                for i in (self.params[index][1]):
+                    if self.params[index][1][i] == value:
+                        return [ index , i ]
+            return [ index, None ]
+        else:
+            return [ None, None ]
+
     def send(self, data):
         self.socket = self.connect()
         payload = self.get_header() + data
@@ -167,13 +217,21 @@ class Fan(object):
     def do_func (self, func, param, value="" ):
         out = ""
         parameter = ""
+        if param == "ff77":
+            val_bytes = 6
+        else:
+            val_bytes = int(len(value) / 2 ) ;
         for i in range (0,len(param), 4):
             out = param[i:(i+4)] ;
             if out[:2] != "00":
-                out = "ff" + out
+                n_out = "ff" + out[:2]
+                if val_bytes > 1:
+                    n_out += "fe" + hex(val_bytes).replace("0x","").zfill(2) + out[2:4]
+                out = n_out
             else:
                 out = out[2:4]
             parameter += out ;
+        print (parameter)
         data = func + parameter + value
         self.send(data)
         response = self.receive()
@@ -187,6 +245,14 @@ class Fan(object):
             request += hex(param).replace("0x","").zfill(4)
         self.do_func(self.func['read'], request)
 
+    def set_param ( self, param, value ):
+        valpar = self.get_params_values (param, value)
+        if valpar[0] !=  None:
+            if valpar[1] != None:
+                self.do_func( self.func['write_return'], hex(valpar[0]).replace("0x","").zfill(4), hex(valpar[1]).replace("0x","").zfill(2) )
+            else:
+                self.do_func( self.func['write_return'], hex(valpar[0]).replace("0x","").zfill(4), value )
+            
     def set_state_on(self):
         request = "0001";
         value = "01" ;
@@ -343,6 +409,15 @@ class Fan(object):
     def timer_mode(self, input):
         val = int (input, 16 )
         self._timer_mode = self.timer_modes[val]
+        
+    @property
+    def timer_counter(self):
+        return self._timer_counter
+
+    @timer_counter.setter
+    def timer_counter(self, input):
+        val = int(input,16).to_bytes(3,'big')
+        self._timer_counter = str ( val[2] ) + "h " +str ( val[1] ) + "m " + str ( val[0] ) + "s " 
 
     @property
     def humidity_sensor_state(self):
@@ -423,7 +498,8 @@ class Fan(object):
     @man_speed.setter
     def man_speed(self, input ):
         val =  int(input,16)
-        self._man_speed = str(int( val / 255 * 100)) + " %"
+        if val >= 0 and val <= 255:
+            self._man_speed = str(int( val / 255 * 100)) + " %"
         
     @property
     def fan1_speed(self):
@@ -450,7 +526,6 @@ class Fan(object):
     @filter_timer_countdown.setter
     def filter_timer_countdown(self, input ):
         val = int(input,16).to_bytes(3,'big')
-        
         self._filter_timer_countdown = str ( val[2] ) + "d " +str ( val[1] ) + "h " + str ( val[0] ) + "m " 
 
     @property
@@ -654,7 +729,7 @@ class Fan(object):
     @analogV_treshold.setter
     def analogV_treshold(self, input):
         val = int(input,16)
-        self._analogV_treshold = (str(int(val/255*100))) + ' %'
+        self._analogV_treshold = str(val) + ' %'
         
     @property
     def unit_type (self):
