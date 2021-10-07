@@ -27,8 +27,8 @@ class Fan(object):
     prmt['timer_mode'] = "0007"
     prmt['timer_counter'] = "000B"
     prmt['humidity_sensor_state'] = "000F"
-    prmt['relay_sensor_state'] = "0014"
-    prmt['analogV_sensor_state'] = "0016"
+    prmt['relay_sensor_status'] = "0014"
+    prmt['analogV_sensor_status'] = "0016"
     prmt['humidity_treshold'] = "0019"
     prmt['battery_voltage'] = "0024"
     prmt['humidity'] = "0025"
@@ -52,7 +52,7 @@ class Fan(object):
     prmt['cloud_server_state'] = "0085"
     prmt['firmware'] = "0086"
     prmt['factory_reset'] = "0087"
-    prmt['filter_replacement_state'] = "0088"
+    prmt['filter_replacement_status'] = "0088"
     prmt['wifi_operation_mode'] = "0094"
     prmt['wifi_name'] = "0095"
     prmt['wifi_pasword'] = "0096"
@@ -62,37 +62,97 @@ class Fan(object):
     prmt['wifi_assigned_ip'] = "009C"
     prmt['wifi_assigned_netmask'] = "009D"
     prmt['wifi_main_gateway'] = "009E"
-    prmt['wifi_apply_adn_quit'] = "00A0"
-    prmt['wifi_discard_adn_quit'] = "00A2"
+    prmt['wifi_apply_and_quit'] = "00A0"
+    prmt['wifi_discard_and_quit'] = "00A2"
     prmt['curent_wifi_ip'] = "00A3"
-    prmt['airflow'] = "00B7"
-    prmt['analogV_treshold'] = "00B8"
-    prmt['unit_type'] = "00B9"
-    prmt['night_mode_timer'] = "0302"
-    prmt['party_mode_timer'] = "0303"
-    prmt['party_mode_timer'] = "0303"
-    prmt['humidity_status'] = "0304"
-    prmt['analogV_status'] = "0305"
 
     states = dict()    
-    states['OFF'] = "00"
-    states['ON'] = "01"
-    states['TOGLE'] = "02"
+    states = ['off', 'on' , 'togle']
+    # = "00"
+    # states['ON'] = "01"
+    # states['TOGLE'] = "02"
 
     speeds = dict()
-    speeds['01'] = "low"
-    speeds['02'] = "medium"
-    speeds['03'] = "high"
-    speeds['FF'] = "manual"
-
-    status = dict()
-    status['00'] = "off"
-    status['01'] = "on"
+    spees = [ 'low', 'medium', 'high', 'manual' ]
+    # speeds['01'] = "low"
+    # speeds['02'] = "medium"
+    # speeds['03'] = "high"
+    # speeds['FF'] = "manual"
 
     timer_mode = dict ()
-    timer_mode['00'] = "off"
-    timer_mode['01'] = "Night"
-    timer_mode['02'] = "Party"
+    timer_mode = [ 'off', 'night', 'party' ]
+    # timer_mode['00'] = "off"
+    # timer_mode['01'] = "Night"
+    # timer_mode['02'] = "Party"
+
+    status = dict()
+    status = [ 'off', 'on' ]
+    # status['00'] = "off"
+    # status['01'] = "on"
+
+    params = {
+        0x0001: [ 'state', states ],
+        0x0002: [ 'speed', speeds ],
+        0x0006: [ 'boost_status', status ],
+        0x0007: [ 'timer_mode', timer_mode ],
+        0x000b: [ 'timer_counter', None ],
+        0x000f: [ 'humidity_sensor_status', status ],
+        0x0014: [ 'relay_sensor_status', status ],
+        0x0016: [ 'analogV_sensor_status', status ],
+        0x0019: [ 'humidity_treshold', None ],
+        0x0024: [ 'battery_voltage', None ],
+        0x0025: [ 'humidity', None ],
+        0x002d: [ 'analogV', None ],
+        0x0032: [ 'relay_value', None ],
+        0x0044: [ 'man_speed', None ],
+        0x004a: [ 'fan1_speed', None ],
+        0x004b: [ 'fan2_speed', None ],
+        0x0064: [ 'filter_timer_countdown', None ],
+        0x0065: [ 'filter_timer_reset', None ],
+        0x0066: [ 'boost_time', None ],
+        0x006f: [ 'rtc_time', None ],
+        0x0070: [ 'rtc_date', None ],
+        0x0072: [ 'weekly_schedule_state', states ],
+        0x0077: [ 'weekly_schedule_setup', None ],
+        0x007c: [ 'device_search', None ],
+        0x007d: [ 'device_password', None ],
+        0x007e: [ 'machine_hours', None ],
+        # 0x0080: [ 'reset_alarms', None ],
+        0x0083: [ 'alarm_state', [ 'no', 'alarm', 'warning' ] ],
+        0x0085: [ 'cloud_server_state', states ],
+        0x0086: [ 'firmware', None ],
+        # 0x0087: [ 'factory_reset', None ],
+        0x0088: [ 'filter_replacement_status', status ],
+        0x0094: [ 'wifi_operation_mode', [ 'client' , 'ap' ] ],
+        0x0095: [ 'wifi_name' , None ],
+        0x0096: [ 'wifi_pasword', None ],
+        0x0099: [ 'wifi_enc_type', { 
+                    0x48: 'Open', 
+                    0x50: 'wpa-psk' ,
+                    0x51: 'wpa2_psk', 
+                    0x52: 'wpa_wpa2_psk' } 
+                ],
+        0x009a: [ 'wifi_freq_chnnel', None ],
+        0x009b: [ 'wifi_dhcp', [ 'STATIC', 'DHCP', 'Invert' ] ],
+        0x009c: [ 'wifi_assigned_ip', None ],
+        0x009d: [ 'wifi_assigned_netmask', None ],
+        0x009e: [ 'wifi_main_gateway', None ],
+        # 0x00a0: [ 'wifi_apply_and_quit', None ],
+        # 0x00a2: [ 'wifi_discard_and_quit', None ],
+        0x00a3: [ 'curent_wifi_ip', None ],
+        0x00b7: [ 'airflow' , [ 'ventilation', 'heat recovery', 'supply' ] ],
+        0x00b8: [ 'analogV_treshold', None ],
+        0x00b9: [ 'unit_type', {
+                    0x0300: 'Vento Expert A50-1 W V.2, Vento Expert A85-1 W V.2, Vento Expert A100-1 W V.2', 
+                    0x0400: 'Vento Expert Duo A30-1 W V.2', 
+                    0x0500: 'Vento Expert A30 W V.2' }
+                ],
+        0x0302: [ 'night_mode_timer', None ],
+        0x0303: [ 'party_mode_timer', None ],
+        0x0303: [ 'party_mode_timer', None ],
+        0x0304: [ 'humidity_status', status ],
+        0x0305: [ 'analogV_status', status ]
+    }
     
     alarms = dict ()
     alarms['00'] = "no"
@@ -114,8 +174,7 @@ class Fan(object):
         self._host = host
         self._port = port
         self._type = "02"
-        self._fan_id_size = 10
-        self._fan_id = fan_id
+        self._id = fan_id
         self._pwd_size = 0
         self._password = password
 #        self._fan_state = Fan.status[self.read_param(Fan.prmt['state'])]
@@ -124,8 +183,8 @@ class Fan(object):
 #        self._fan_timer_mode = Fan.timer_mode[self.read_param(Fan.prmt['timer_mode'])]
 #        self._fan_timer_counter = None
 #        self._fan_humidity_sensor_state = Fan.status[self.read_param(Fan.prmt['humidity_sensor_state'])]
-#        self._fan_relay_sensor_state = Fan.status[self.read_param(Fan.prmt['relay_sensor_state'])]
-#        self._fan_analogV_sensor_state = Fan.status[self.read_param(Fan.prmt['analogV_sensor_state'])]
+#        self._fan_relay_sensor_status = Fan.status[self.read_param(Fan.prmt['relay_sensor_status'])]
+#        self._fan_analogV_sensor_status = Fan.status[self.read_param(Fan.prmt['analogV_sensor_status'])]
 #        self._fan_humidity_treshold = int(self.read_param(Fan.prmt['humidity_treshold']),16)
 #        self._fan_battery_voltage = None # int(self.read_param(Fan.prmt['battery_voltage']),16)
 #        self._fan_humidity = int(self.read_param(Fan.prmt['humidity']),16)
@@ -144,7 +203,7 @@ class Fan(object):
 #        self._fan_alarm_state = Fan.alarms[self.read_param(Fan.prmt['alarm_state'])]
 #        self._fan_cloud_server_state = Fan.status[self.read_param(Fan.prmt['cloud_server_state'])]
 #        self._fan_firmware = None
-#        self._fan_filter_replacement_state = Fan.status[self.read_param(Fan.prmt['filter_replacement_state'])]
+#        self._fan_filter_replacement_status = Fan.status[self.read_param(Fan.prmt['filter_replacement_status'])]
 #        self._fan_curent_wifi_ip = None
 #        self._fan_airflow = Fan.airflows[self.read_param(Fan.prmt['airflow'])]
 #        self._fan_analogV_treshold = int(int(self.read_param(Fan.prmt['analogV_treshold']),16)/255*100)
@@ -179,11 +238,11 @@ class Fan(object):
         return hex(len(str)).replace("0x","").zfill(2)
 
     def get_header(self):
-        fan_id_size = self.get_size(self._fan_id)
+        id_size = self.get_size(self._id)
         pwd_size = self.get_size (self._password)
-        fan_id = self.str2hex(self._fan_id)
+        id = self.str2hex(self._id)
         password = self.str2hex(self._password)
-        str = f"{self._type}{fan_id_size}{fan_id}{pwd_size}{password}"
+        str = f"{self._type}{id_size}{id}{pwd_size}{password}"
         return str
 
     def send(self, data):
@@ -200,13 +259,14 @@ class Fan(object):
             return None
 
     def read_param(self, input ):
-        print ( "input: " + str(input) )
         out = ""
         parameter = ""
         for i in range (0,len(input), 4):
             out = input[i:(i+4)] ;
             if out[:2] != "00":
-                out = "ff" + out ;
+                    out = "ff" + out
+            # if out[:4] == "0077":
+            #   out = "fe0677000101ee0101"
             parameter += out ;
         data = Fan.func['read'] + parameter
         time.sleep(0.01)
@@ -219,7 +279,7 @@ class Fan(object):
 
     def update_all(self):
         # print ("Update all")
-        data = Fan.func['read'] + Fan.prmt['state'] + Fan.prmt['speed'] + Fan.prmt['boost_status'] + Fan.prmt['timer_mode'] + Fan.prmt['timer_counter'] + Fan.prmt['humidity_sensor_state'] + Fan.prmt['relay_sensor_state']
+        data = Fan.func['read'] + Fan.prmt['state'] + Fan.prmt['speed'] + Fan.prmt['boost_status'] + Fan.prmt['timer_mode'] + Fan.prmt['timer_counter'] + Fan.prmt['humidity_sensor_state'] + Fan.prmt['relay_sensor_status']
         self.send(data)
         response = self.receive()
         if response:
@@ -351,12 +411,11 @@ class Fan(object):
                 parameter = 1
                 value_counter = 1
                 high_byte_value = 0
-                print ( response.hex() )
+                print (Fan.params[int(response[:2].hex(),16)][0] + ": " + response[2:].hex());
                 response = bytearray()
 
         payload = data[pointer:length]
-        return payload.hex()
-        
+        return payload.hex()       
 
     def old_parse_response(self, data):
         fan_params = {
@@ -415,12 +474,12 @@ class Fan(object):
             sys.exit()
 
     @property
-    def fan_id(self):
-        return self._fan_id
+    def id(self):
+        return self._id
 
-    @fan_id.setter
-    def fan_id(self, id):
-        self._fan_id = id
+    @id.setter
+    def id(self, id):
+        self._id = id
         
     @property
     def fan_password(self):
