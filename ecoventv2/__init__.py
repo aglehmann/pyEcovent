@@ -1,11 +1,11 @@
-
 """ Version  """
-__version__ = "0.8.4"
+__version__ = "0.9.0"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
 import sys
 import time
+import math
 
 class Fan(object):
     """Class to communicate with the ecofan"""
@@ -201,22 +201,25 @@ class Fan(object):
 
     def set_speed(self, speed):
         if speed >= 1 and speed <= 3:
-            cmd = '04' + '{0:0{1}x}'.format(speed,2)
-            self.send(bytes.fromhex(cmd))
-            self.socket.close()
+            request = "0002" 
+            value = hex(speed).replace("0x","").zfill(2)
+            self.do_func ( self.func['write_return'], request, value )
 
     def set_man_speed(self, speed):
-        if speed >= 22 and speed <= 255:
-            cmd = '05' + '{0:0{1}x}'.format(speed,2)
-            self.send(bytes.fromhex(cmd))
-            self.socket.close()
+        if speed >= 2 and speed <= 100: 
+            request = "0044"  
+            value = math.ceil(255 / 100 * speed)
+            value = hex(value).replace("0x","").zfill(2)
+            self.do_func ( self.func['write_return'], request, value )
+            request = "0002"
+            value = "ff"
+            self.do_func ( self.func['write_return'], request, value )
 
     def set_airflow(self, val):
         if val >= 0 and val <= 2:
-            cmd = '06' + '{0:0{1}x}'.format(val,2)
-            self.send(bytes.fromhex(cmd))
-            self.socket.close()
-
+            request = "00b7"
+            value = hex(val).replace("0x","").zfill(2)
+            self.do_func ( self.func['write_return'], request, value )
 
     def parse_response(self,data):
         pointer = 20 ; # discard header bytes 
