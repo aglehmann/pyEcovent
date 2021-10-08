@@ -120,7 +120,7 @@ class Fan(object):
         0x006f: [ 'rtc_time', None ],
         0x0070: [ 'rtc_date', None ],
         0x0072: [ 'weekly_schedule_state', states ],
-        0x0077: [ 'weekly_schedule_setup', None ],
+        0x0077: [ 'weekly_schedule_setup', None ],        
         0x007c: [ 'device_search', None ],
         0x007d: [ 'device_password', None ],
         0x007e: [ 'machine_hours', None ],
@@ -164,8 +164,7 @@ class Fan(object):
         self._id = fan_id
         self._pwd_size = 0
         self._password = password
-        
-        # self.update()
+        self.update()
 
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -223,29 +222,33 @@ class Fan(object):
 
     def receive(self):
         try:
-            response = self.socket.recv(256)
+            response = self.socket.recv(4096)
             return response
         except socket.timeout:
             return None
 
     def do_func (self, func, param, value="" ):
         out = ""
-        n_out = ""
         parameter = ""
-        #if param == "0077":
-        #    val_bytes = 6
-        #else:
-        val_bytes = int(len(value) / 2 ) ;
         for i in range (0,len(param), 4):
+            n_out = ""
             out = param[i:(i+4)] ;
+            if out == "0077" and value =="" :
+                value="0101"
+            if value != "":
+                val_bytes = int(len(value) / 2 ) ;
+            else:
+                val_bytes = 0
             if out[:2] != "00":
                 n_out = "ff" + out[:2]
             if val_bytes > 1:
                 n_out += "fe" + hex(val_bytes).replace("0x","").zfill(2) + out[2:4]
             else:
-                n_out = out[2:4]
-            parameter += n_out ;
-        data = func + parameter + value
+                n_out += out[2:4]
+            parameter += n_out  + value
+            if out == "0077":
+                value = ""
+        data = func + parameter 
         self.send(data)
         response = self.receive()
         if response:
@@ -317,8 +320,6 @@ class Fan(object):
         high_byte_value = 0
         parameter = 1 ;
         for p in payload:
-            # print (hex(p)) #.replace("0x","").zfill(2))
-            # print ( "par: " + str(parameter) + " count: " + str(value_counter) + " ext: " + hex (ext_function) )
             if parameter and p == 0xff:
                 ext_function = 0xff
                 # print ( "def ext:" + hex(0xff) )
@@ -688,7 +689,7 @@ class Fan(object):
     @wifi_freq_chnnel.setter
     def wifi_freq_chnnel(self, input):
         val = int (input, 16 )
-        self._wifi_freq_chnnel = val                
+        self._wifi_freq_chnnel = str(val)                
 
     @property
     def wifi_dhcp (self):
