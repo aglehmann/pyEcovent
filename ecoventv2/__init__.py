@@ -27,6 +27,7 @@ class Fan(object):
     }
 
     speeds = {
+         0: 'standby',
          1: 'low', 
          2: 'medium', 
          3: 'high', 
@@ -55,6 +56,19 @@ class Fan(object):
         1: 'alarm', 
         2: 'warning' 
     }
+    
+    days_of_week = {
+        0: 'all days',
+        1: 'Monday',
+        2: 'Tuesday',
+        3: 'Wednesday',
+        4: 'Thursday',
+        5: 'Friday',
+        6: 'Saturday',
+        7: 'Sunday',
+        8: 'Mon-Fri',
+        9: 'Sat-Sun',
+    }  
 
     filters = {
         0: 'filter replacement not required' , 
@@ -106,6 +120,7 @@ class Fan(object):
         0x006f: [ 'rtc_time', None ],
         0x0070: [ 'rtc_date', None ],
         0x0072: [ 'weekly_schedule_state', states ],
+        0x0077: [ 'weekly_schedule_setup', None ],
         0x007c: [ 'device_search', None ],
         0x007d: [ 'device_password', None ],
         0x007e: [ 'machine_hours', None ],
@@ -130,7 +145,6 @@ class Fan(object):
         0x0303: [ 'party_mode_timer', None ],
         0x0304: [ 'humidity_status', statuses ],
         0x0305: [ 'analogV_status', statuses ],
-        0x0077: [ 'weekly_schedule_setup', None ]
     }
 
     write_only_params = {
@@ -216,22 +230,21 @@ class Fan(object):
 
     def do_func (self, func, param, value="" ):
         out = ""
+        n_out = ""
         parameter = ""
-        if param == "ff77":
-            val_bytes = 6
-        else:
-            val_bytes = int(len(value) / 2 ) ;
+        #if param == "0077":
+        #    val_bytes = 6
+        #else:
+        val_bytes = int(len(value) / 2 ) ;
         for i in range (0,len(param), 4):
             out = param[i:(i+4)] ;
             if out[:2] != "00":
                 n_out = "ff" + out[:2]
-                if val_bytes > 1:
-                    n_out += "fe" + hex(val_bytes).replace("0x","").zfill(2) + out[2:4]
-                out = n_out
+            if val_bytes > 1:
+                n_out += "fe" + hex(val_bytes).replace("0x","").zfill(2) + out[2:4]
             else:
-                out = out[2:4]
-            parameter += out ;
-        print (parameter)
+                n_out = out[2:4]
+            parameter += n_out ;
         data = func + parameter + value
         self.send(data)
         response = self.receive()
@@ -563,6 +576,15 @@ class Fan(object):
     @weekly_schedule_state.setter
     def weekly_schedule_state(self, val):
         self._weekly_schedule_state = self.states[int(val)]
+
+    @property
+    def weekly_schedule_setup(self):
+        return self._weekly_schedule_setup
+
+    @weekly_schedule_setup.setter
+    def weekly_schedule_setup(self, input):
+        val = int(input,16).to_bytes(6,'big')
+        self._weekly_schedule_setup = self.days_of_week[val[0]] + '/' + str(val[1]) + ': to ' + str(val[5]) + 'h ' + str(val[4]) + 'm ' + self.speeds[val[2]]
 
     @property
     def device_search(self):

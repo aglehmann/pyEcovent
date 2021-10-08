@@ -5,8 +5,8 @@ from ecoventv2 import Fan
 fan=Fan("10.94.0.106","003A00345842570A","1111")
 
 # Set examples
-# fan.set_param('state','togle') #'on','off','togle'
-# print ( 'state: ' + fan.state )
+fan.set_param('state','on') #'on','off','togle'
+print ( 'state: ' + fan.state )
 # fan.set_param('speed','manual') #'low','medium','high','manual'
 # print ( 'speed: ' + fan.speed )
 # fan.set_param('man_speed', hex(math.ceil( 5 * 255 / 100 )).replace("0x","").zfill(2) ) # hex(math.ceil( speed_in_% * 255 / 100 )).replace("0x","").zfill(2)
@@ -46,13 +46,16 @@ fan=Fan("10.94.0.106","003A00345842570A","1111")
 #m=0
 #fan.set_param('night_mode_timer',hex(m).replace("0x","").zfill(2) + hex(h).replace("0x","").zfill(2)) 
 #print ( 'night_mode_timer: ' + fan.night_mode_timer )
-#h=2
-#m=0
-#fan.set_param('party_mode_timer', hex(m).replace("0x","").zfill(2) + hex(h).replace("0x","").zfill(2)) 
-#print ( 'party_mode_timer: ' + fan.party_mode_timer )
+h=4
+m=0
+fan.set_param('party_mode_timer', hex(m).replace("0x","").zfill(2) + hex(h).replace("0x","").zfill(2)) 
+print ( 'party_mode_timer: ' + fan.party_mode_timer )
 
-fan.do_func(fan.func['read'] , "0077")
-print ( fan.weekly_schedule_setup ) 
+for i in range (1,8):
+    for j in range (1,5):
+        fan.do_func(fan.func['read'] , "0077" , hex(i).replace("0x","").zfill(2) + hex(j).replace("0x","").zfill(2)) # value select schedule Day/Period
+        print ( 'weekly_schedule_setup: ' + fan.weekly_schedule_setup ) 
+        time.sleep(0.2)
 
 #for param in fan.params:
 # print ( fan.params[param][0] + ": " + str(getattr ( fan, fan.params[param][0])))
