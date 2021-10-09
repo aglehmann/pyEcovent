@@ -47,8 +47,8 @@ class Fan(object):
 
     airflows = {
         0: 'ventilation',
-        1: 'heat recovery', 
-        2: 'supply' 
+        1: 'heat_recovery', 
+        2: 'air_supply' 
     } 
 
     alarms = {
