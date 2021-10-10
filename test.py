@@ -4,6 +4,15 @@ from ecoventv2 import Fan
 
 fan=Fan("10.94.0.106","003A00345842570A","1111")
 
+#man_speed = 2
+#fan.set_param('man_speed', hex(math.ceil( man_speed * 255 / 100 )).replace("0x","").zfill(2) ) # hex(math.ceil( speed_in_% * 255 / 100 )).replace("0x","").zfill(2)
+#print ( 'man_speed: ' + fan.man_speed )
+
+fan.set_param('state','off') #'on','off','togle'
+fan.set_param('speed','manual') #'low','medium','high','manual'
+print ( 'speed: ' + fan.speed )
+
+
 print ( 'man_speed: ' + fan.man_speed )
 print ( 'fan1_speed: ' + fan.fan1_speed )
 print ( 'fan2_speed: ' + fan.fan2_speed )

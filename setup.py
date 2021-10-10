@@ -12,9 +12,9 @@ setup(
     description='Python3 library for single-room energy recovery ventilators from Vents / Blauberg / Flexit',
     long_description=long_description,
     python_requires='>=3.6.7',
-    author='Aleksander Lehmann',
-    author_email='aleksander@flovik.no',
-    url='https://github.com/aglehmann/pyEcovent',
+    author='Matjaž Godec/Aleksander Lehmann',
+    author_email='matjaz.godec@gmail.com,aleksander@flovik.no',
+    url='https://github.com/gody01/pyEcoventV2',
     license="MIT",
     classifiers=[
         'Intended Audience :: Developers',
