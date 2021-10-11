@@ -6,10 +6,10 @@ with open("README.md", 'r') as fp:
     long_description = fp.read()
 
 setup(
-    name = 'pyEcovent',
+    name = 'pyEcoventV2',
     packages = ['ecovent','ecoventv2'],
-    version='0.9.0',
-    description='Python3 library for single-room energy recovery ventilators from Vents / Blauberg / Flexit',
+    version='0.9.1',
+    description='Python3 library for single-room energy recovery ventilators with api V2 from Vents / Blauberg / Flexit',
     long_description=long_description,
     python_requires='>=3.6.7',
     author='Matjaž Godec/Aleksander Lehmann',

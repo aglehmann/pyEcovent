@@ -156,7 +156,7 @@ class Fan(object):
         0x00a2: [ 'wifi_discard_and_quit', None ],
     }
 
-    def __init__(self, host, fan_id="003A00345842570A", password="1111", name="ecofanv2", port=4000 ):
+    def __init__(self, host, fan_id="DEFAULT_DEVICEID", password="1111", name="ecofanv2", port=4000 ):
         self._name = name
         self._host = host
         self._port = port
@@ -164,6 +164,10 @@ class Fan(object):
         self._id = fan_id
         self._pwd_size = 0
         self._password = password
+        
+        if fan_id == "DEFAULT_DEVICEID":
+            self.get_param( 'device_search' )
+            self._id = self.device_search        
         self.update()
 
     def connect(self):
@@ -268,6 +272,11 @@ class Fan(object):
                 self.do_func( self.func['write_return'], hex(valpar[0]).replace("0x","").zfill(4), hex(valpar[1]).replace("0x","").zfill(2) )
             else:
                 self.do_func( self.func['write_return'], hex(valpar[0]).replace("0x","").zfill(4), value )
+                
+    def get_param ( self, param ):
+        idx = self.get_params_index (param)
+        if idx !=  None:
+                self.do_func( self.func['read'], hex(idx).replace("0x","").zfill(4) )
             
     def set_state_on(self):
         request = "0001";
