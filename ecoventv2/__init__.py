@@ -156,7 +156,7 @@ class Fan(object):
         0x00a2: [ 'wifi_discard_and_quit', None ],
     }
 
-    def __init__(self, host, fan_id="DEFAULT_DEVICEID", password="1111", name="ecofanv2", port=4000 ):
+    def __init__(self, host, password="1111", fan_id="DEFAULT_DEVICEID", name="ecofanv2", port=4000 ):
         self._name = name
         self._host = host
         self._port = port

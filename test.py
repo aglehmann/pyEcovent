@@ -2,8 +2,8 @@ import time
 import math
 from ecoventv2 import Fan
 
-# fan=Fan("10.94.0.106","003A00345842570A","1111")
-# fan=Fan("10.94.0.106","DEFAULT_DEVICEID","1111")
+# fan=Fan("10.94.0.106", "1111" , "003A00345842570A" )
+# fan=Fan("10.94.0.106", "1111" , "DEFAULT_DEVICEID" )
 
 fan=Fan("vento2.elgo.si")
 
