@@ -5,8 +5,6 @@ from ecoventv2 import Fan
 # fan=Fan("10.94.0.106", "1111" , "003A00345842570A" )
 # fan=Fan("10.94.0.106", "1111" , "DEFAULT_DEVICEID" )
 
-fan=Fan("vento2.elgo.si")
-
 # fan.update();
 # fan.get_param( 'device_search' );
 # print ( 'fan_id: ' , fan.device_search ) ;
