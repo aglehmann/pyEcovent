@@ -14,11 +14,12 @@ fan=Fan("vento2.elgo.si")
 
 fan.update();
 
-
-
-#man_speed = 5
-#fan.set_param('man_speed', hex(math.ceil( man_speed * 255 / 100 )).replace("0x","").zfill(2) ) # hex(math.ceil( speed_in_% * 255 / 100 )).replace("0x","").zfill(2)
-#print ( 'man_speed: ' + fan.man_speed )
+# fan.set_man_speed(14);
+# fan.update();
+# print ( 'man_speed: ' + fan.man_speed )
+# man_speed = 5
+# fan.set_param('man_speed', hex(math.ceil( man_speed * 255 / 100 )).replace("0x","").zfill(2) ) # hex(math.ceil( speed_in_% * 255 / 100 )).replace("0x","").zfill(2)
+# print ( 'man_speed: ' + fan.man_speed )
 
 # fan.set_param('state','togle')
 

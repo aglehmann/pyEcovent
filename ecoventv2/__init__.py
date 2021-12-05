@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.0"
+__version__ = "0.9.1"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -296,10 +296,20 @@ class Fan(object):
             value = hex(speed).replace("0x","").zfill(2)
             self.do_func ( self.func['write_return'], request, value )
 
-    def set_man_speed(self, speed):
+    def set_man_speed_percent(self, speed):
         if speed >= 2 and speed <= 100: 
             request = "0044"  
             value = math.ceil(255 / 100 * speed)
+            value = hex(value).replace("0x","").zfill(2)
+            self.do_func ( self.func['write_return'], request, value )
+            request = "0002"
+            value = "ff"
+            self.do_func ( self.func['write_return'], request, value )
+
+    def set_man_speed(self, speed):
+        if speed >= 14 and speed <= 255:
+            request = "0044"
+            value = speed
             value = hex(value).replace("0x","").zfill(2)
             self.do_func ( self.func['write_return'], request, value )
             request = "0002"
