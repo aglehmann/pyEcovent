@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.1"
+__version__ = "0.9.2"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -532,7 +532,7 @@ class Fan(object):
     def man_speed(self, input ):
         val =  int(input,16)
         if val >= 0 and val <= 255:
-            self._man_speed = str(int( val / 255 * 100)) + " %"
+            self._man_speed = str(int( val / 255 * 100))
         
     @property
     def fan1_speed(self):
@@ -541,7 +541,7 @@ class Fan(object):
     @fan1_speed.setter
     def fan1_speed(self, input ):
         val = int.from_bytes(int(input,16).to_bytes(2,'big'), byteorder='little', signed=False)
-        self._fan1_speed = str ( val ) + " rpm" 
+        self._fan1_speed = str ( val )
         
     @property
     def fan2_speed(self):
@@ -550,7 +550,7 @@ class Fan(object):
     @fan2_speed.setter
     def fan2_speed(self, input ):
         val = int.from_bytes(int(input,16).to_bytes(2,'big'), byteorder='little', signed=False)
-        self._fan2_speed = str ( val ) + " rpm" 
+        self._fan2_speed = str ( val )
 
     @property
     def filter_timer_countdown(self):
