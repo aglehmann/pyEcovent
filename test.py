@@ -3,7 +3,7 @@ import math
 from ecoventv2 import Fan
 
 # fan=Fan("10.94.0.106", "1111" , "003A00345842570A" )
-fan=Fan("10.94.0.106", "1111" , "DEFAULT_DEVICEID" )
+# fan=Fan("10.94.0.106", "1111" , "DEFAULT_DEVICEID" )
 
 # fan.update();
 # fan.get_param( 'device_search' );
@@ -11,8 +11,6 @@ fan=Fan("10.94.0.106", "1111" , "DEFAULT_DEVICEID" )
 # fan.id=fan.device_search ;
 
 fan.update();
-
-print ( fan.man_speed )
 
 # fan.set_man_speed(14);
 # fan.update();
