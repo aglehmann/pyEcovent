@@ -3,7 +3,8 @@ import math
 from ecoventv2 import Fan
 
 # fan=Fan("10.94.0.106", "1111" , "003A00345842570A" )
-# fan=Fan("10.94.0.106", "1111" , "DEFAULT_DEVICEID" )
+fan=Fan("10.94.0.105", "1111" , "DEFAULT_DEVICEID" )
+fan.init_device();
 
 # fan.update();
 # fan.get_param( 'device_search' );
@@ -107,8 +108,8 @@ fan.update();
 #        print ( 'weekly_schedule_setup: ' + fan.weekly_schedule_setup ) 
 #        time.sleep(0.2)
 
-#for i in ( fan.params ):
-#    print ( fan.params[i][0] + ": " + getattr(fan , fan.params[i][0]))
+for i in ( fan.params ):
+    print ( fan.params[i][0] + ": " + getattr(fan , fan.params[i][0]))
 
 
 #fan.set_param('airflow','ventilation') # 'ventilation', 'heat_recovery', 'air_supply'

@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.2"
+__version__ = "0.9.5"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -165,9 +165,10 @@ class Fan(object):
         self._pwd_size = 0
         self._password = password
         
-        if fan_id == "DEFAULT_DEVICEID":
+    def init_device (self):
+        if self._id == "DEFAULT_DEVICEID":
             self.get_param( 'device_search' )
-            self._id = self.device_search        
+            self._id = self.device_search
         self.update()
 
     def connect(self):
@@ -486,7 +487,7 @@ class Fan(object):
     @humidity_treshold.setter
     def humidity_treshold(self, input):
         val = int (input, 16 )
-        self._humidity_treshold = str( val ) + " %"
+        self._humidity_treshold = str( val )
         
     @property
     def battery_voltage (self):
@@ -504,7 +505,7 @@ class Fan(object):
     @humidity.setter
     def humidity(self, input):
         val = int (input, 16 )
-        self._humidity = str( val ) + " %"
+        self._humidity = str( val )
 
     @property
     def analogV (self):
@@ -532,7 +533,7 @@ class Fan(object):
     def man_speed(self, input ):
         val =  int(input,16)
         if val >= 0 and val <= 255:
-            self._man_speed = str(int( val / 255 * 100))
+            self._man_speed = int( val / 255 * 100)
         
     @property
     def fan1_speed(self):
@@ -771,7 +772,7 @@ class Fan(object):
     @analogV_treshold.setter
     def analogV_treshold(self, input):
         val = int(input,16)
-        self._analogV_treshold = str(val) + ' %'
+        self._analogV_treshold = str(val)
         
     @property
     def unit_type (self):

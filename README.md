@@ -1,9 +1,9 @@
-# pyEcovent
+# pyEcoventV2
 
 Python3 library for single-room energy recovery ventilators from Vents / Blauberg / Flexit
 
 ## Install
-	pip3 install pyEcovent
+	pip3 install pyEcoventV2
 
 ## Example usage
 	from ecovent import Fan
