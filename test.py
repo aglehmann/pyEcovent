@@ -109,7 +109,9 @@ fan.update();
 #        time.sleep(0.2)
 
 for i in ( fan.params ):
-    print ( fan.params[i][0] + ": " + getattr(fan , fan.params[i][0]))
+    attr = str(getattr(fan , fan.params[i][0]))
+#    print ( attr )
+    print ( fan.params[i][0] + ": " + attr)
 
 
 #fan.set_param('airflow','ventilation') # 'ventilation', 'heat_recovery', 'air_supply'
@@ -120,4 +122,3 @@ for i in ( fan.params ):
 
 #fan.set_param('airflow','heat_recovery') # 'ventilation', 'heat_recovery', 'air_supply'
 #print ( 'airflow: ' + fan.airflow )
-
