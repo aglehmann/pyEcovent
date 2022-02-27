@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.5"
+__version__ = "0.9.7"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -116,6 +116,7 @@ class Fan(object):
         0x004a: [ 'fan1_speed', None ],
         0x004b: [ 'fan2_speed', None ],
         0x0064: [ 'filter_timer_countdown', None ],
+        0x0065: [ 'filter_timer_reset', None ],		# WRITE ONLY
         0x0066: [ 'boost_time', None ],
         0x006f: [ 'rtc_time', None ],
         0x0070: [ 'rtc_date', None ],
@@ -124,6 +125,7 @@ class Fan(object):
         0x007c: [ 'device_search', None ],
         0x007d: [ 'device_password', None ],
         0x007e: [ 'machine_hours', None ],
+        0x0080: [ 'reset_alarms', None ],	# WRITE ONLY
         0x0083: [ 'alarm_status', alarms ],
         0x0085: [ 'cloud_server_state', states ],
         0x0086: [ 'firmware', None ],
@@ -148,10 +150,8 @@ class Fan(object):
     }
 
     write_only_params = {
-        0x0065: [ 'filter_timer_reset', None ],
         0x0077: [ 'weekly_schedule_setup', None ],
-        0x0080: [ 'reset_alarms', None ],
-        0x0087: [ 'factory_reset', None ],        
+        0x0087: [ 'factory_reset', None ],
         0x00a0: [ 'wifi_apply_and_quit', None ],
         0x00a2: [ 'wifi_discard_and_quit', None ],
     }
@@ -171,11 +171,39 @@ class Fan(object):
             self._id = self.device_search
         self.update()
 
+    def search_devices (self):
+        payload="FDFD021044454641554c545f44455649434549440431313131017cf805"
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        sock.bind(("0.0.0.0", 4000))
+        sock.settimeout(1.0)
+        ips = []
+        i = 10
+        while ( i > 1 ):
+            i = i - 1
+            self._device_search = self._id
+            if self._host is None:
+                self._host = "<broadcast>"
+            sock.sendto( bytes.fromhex(payload), (self._host, 4000))
+            data, addr = sock.recvfrom(1024)
+            self.parse_response(data)
+            if self._device_search != "DEFAULT_DEVICEID":
+                ips.append(addr[0])
+                ips=list(set(ips))
+            time.sleep(0.1)
+        sock.close()
+        return ips
+
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.settimeout(4)
-        self.socket.connect((self._host, self._port))
-        return self.socket
+        try:
+            self.socket.connect((self._host, self._port))
+            return self.socket
+        except self.socket.timeout as err:
+            print ( "Connection timeout: " + self._host + " " + str(err) )
+            return None
 
     def str2hex(self,str_msg):
         return "".join("{:02x}".format(ord(c)) for c in str_msg)
@@ -220,16 +248,22 @@ class Fan(object):
             return [ None, None ]
 
     def send(self, data):
-        self.socket = self.connect()
-        payload = self.get_header() + data
-        payload = self.HEADER + payload + self.chksum(payload)
-        return self.socket.sendall( bytes.fromhex(payload))
+        try:
+            self.socket = self.connect()
+            payload = self.get_header() + data
+            payload = self.HEADER + payload + self.chksum(payload)
+            response = self.socket.sendall( bytes.fromhex(payload))
+            return response
+        except self.socket.timeout as err:
+            print ( "Connection timeout: " + self._host + " " + str(err) )
+            return None
 
     def receive(self):
         try:
             response = self.socket.recv(4096)
             return response
-        except socket.timeout:
+        except socket.timeout as err:
+            print ( "Connection timeout: " + self._host + " " + str(err) )
             return None
 
     def do_func (self, func, param, value="" ):
@@ -299,7 +333,7 @@ class Fan(object):
 
     def set_man_speed_percent(self, speed):
         if speed >= 2 and speed <= 100: 
-            request = "0044"  
+            request = "0044"
             value = math.ceil(255 / 100 * speed)
             value = hex(value).replace("0x","").zfill(2)
             self.do_func ( self.func['write_return'], request, value )
@@ -389,6 +423,7 @@ class Fan(object):
             self._host = ip
         except socket.error:
             sys.exit()
+
     @property
     def id(self):
         return self._id
@@ -819,3 +854,8 @@ class Fan(object):
         val = int (input, 16 )
         self._analogV_status = self.statuses[val]
 
+    def reset_filter_timer(self):
+        self.set_param('filter_timer_reset', "")
+
+    def reset_alarms (self):
+        self.set_param('reset_alarms', "")

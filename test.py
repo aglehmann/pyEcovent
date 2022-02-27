@@ -3,15 +3,32 @@ import math
 from ecoventv2 import Fan
 
 # fan=Fan("10.94.0.106", "1111" , "003A00345842570A" )
-fan=Fan("10.94.0.105", "1111" , "DEFAULT_DEVICEID" )
-fan.init_device();
+# fan=Fan("10.94.0.105", "1111" , "DEFAULT_DEVICEID" )
 
-# fan.update();
+fan=Fan("10.94.0.255", "1111" , "DEFAULT_DEVICEID" )
+ips = fan.search_devices()
+for addr in ips:
+    print ( addr ) 
+    fan=Fan(addr, "1111" , "DEFAULT_DEVICEID" )
+    fan.init_device()
+    fan.update();
+    # Print out all readable parameters
+    for i in ( fan.params ):
+        if fan.params[i][0] in ['filter_timer_reset', 'reset_alarms']:
+            continue
+        attr = str(getattr(fan , fan.params[i][0]))
+        print ( fan.params[i][0] + ": " + attr)
+
+
+#print ( ips ) 
+#print (ips[0])
+# fan=Fan(ips[0], "1111" , "DEFAULT_DEVICEID" )
+#fan=Fan("10.94.0.108", "1111" , "DEFAULT_DEVICEID" )
+
+
 # fan.get_param( 'device_search' );
 # print ( 'fan_id: ' , fan.device_search ) ;
 # fan.id=fan.device_search ;
-
-fan.update();
 
 # fan.set_man_speed(14);
 # fan.update();
@@ -48,7 +65,7 @@ fan.update();
 # print ( 'timer_counter: ' + fan.timer_counter )
 
 # fan.set_param('humidity_sensor_state','on') # 'off', 'on', 'togle'
-# print ( 'humidity_sensor_state: ' + fan.humidity_sensor_state )
+print ( 'humidity_sensor_state: ' + fan.humidity_sensor_state )
 
 # fan.set_param('relay_sensor_state','off') # 'off', 'on', 'togle'
 # print ( 'relay_sensor_state: ' + fan.relay_sensor_state )
@@ -108,10 +125,10 @@ fan.update();
 #        print ( 'weekly_schedule_setup: ' + fan.weekly_schedule_setup ) 
 #        time.sleep(0.2)
 
-for i in ( fan.params ):
-    attr = str(getattr(fan , fan.params[i][0]))
-#    print ( attr )
-    print ( fan.params[i][0] + ": " + attr)
+# Write only parameters
+# fan.reset_filter_timer()
+# fan.reset_alarms()
+
 
 
 #fan.set_param('airflow','ventilation') # 'ventilation', 'heat_recovery', 'air_supply'
@@ -122,3 +139,5 @@ for i in ( fan.params ):
 
 #fan.set_param('airflow','heat_recovery') # 'ventilation', 'heat_recovery', 'air_supply'
 #print ( 'airflow: ' + fan.airflow )
+
+
