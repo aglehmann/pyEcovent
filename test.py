@@ -4,9 +4,12 @@ from ecoventv2 import Fan
 
 # fan=Fan("10.94.0.106", "1111" , "003A00345842570A" )
 # fan=Fan("10.94.0.105", "1111" , "DEFAULT_DEVICEID" )
+# fan=Fan("10.94.0.255", "1111" , "DEFAULT_DEVICEID" )
+fan=Fan("<broadcast>", "1111" , "DEFAULT_DEVICEID" )
 
-fan=Fan("10.94.0.255", "1111" , "DEFAULT_DEVICEID" )
-ips = fan.search_devices()
+ips = fan.search_devices('0.0.0.0')
+print ( ips ) 
+
 for addr in ips:
     print ( addr ) 
     fan=Fan(addr, "1111" , "DEFAULT_DEVICEID" )
@@ -20,7 +23,7 @@ for addr in ips:
         print ( fan.params[i][0] + ": " + attr)
 
 
-#print ( ips ) 
+
 #print (ips[0])
 # fan=Fan(ips[0], "1111" , "DEFAULT_DEVICEID" )
 #fan=Fan("10.94.0.108", "1111" , "DEFAULT_DEVICEID" )
@@ -65,7 +68,7 @@ for addr in ips:
 # print ( 'timer_counter: ' + fan.timer_counter )
 
 # fan.set_param('humidity_sensor_state','on') # 'off', 'on', 'togle'
-print ( 'humidity_sensor_state: ' + fan.humidity_sensor_state )
+# print ( 'humidity_sensor_state: ' + fan.humidity_sensor_state )
 
 # fan.set_param('relay_sensor_state','off') # 'off', 'on', 'togle'
 # print ( 'relay_sensor_state: ' + fan.relay_sensor_state )
@@ -128,8 +131,6 @@ print ( 'humidity_sensor_state: ' + fan.humidity_sensor_state )
 # Write only parameters
 # fan.reset_filter_timer()
 # fan.reset_alarms()
-
-
 
 #fan.set_param('airflow','ventilation') # 'ventilation', 'heat_recovery', 'air_supply'
 #print ( 'airflow: ' + fan.airflow )

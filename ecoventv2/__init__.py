@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.7"
+__version__ = "0.9.8"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -156,6 +156,57 @@ class Fan(object):
         0x00a2: [ 'wifi_discard_and_quit', None ],
     }
 
+    _name = None
+    _host= None
+    _port = None
+    _id = None
+    _password = None
+    _state = None
+    _speed = None
+    _boost_status = None
+    _timer_mode = None
+    _timer_counter = None
+    _humidity_sensor_state = None
+    _relay_sensor_state = None
+    _analogV_sensor_state = None
+    _humidity_treshold = None
+    _battery_voltage = None
+    _humidity = None
+    _analogV = None
+    _relay_status = None
+    _man_speed = None
+    _fan1_speed = None
+    _fan2_speed = None
+    _filter_timer_countdown = None
+    _boost_time = None
+    _rtc_time = None
+    _rtc_date = None
+    _weekly_schedule_state = None
+    _weekly_schedule_setup = None
+    _device_search = None
+    _device_password = None
+    _machine_hours = None
+    _alarm_status = None
+    _cloud_server_state = None
+    _firmware = None
+    _filter_replacement_status = None
+    _wifi_operation_mode = None
+    _wifi_name = None
+    _wifi_pasword = None
+    _wifi_enc_type = None
+    _wifi_freq_chnnel = None
+    _wifi_dhcp = None
+    _wifi_assigned_ip = None
+    _wifi_assigned_netmask = None
+    _wifi_main_gateway = None
+    _curent_wifi_ip = None
+    _airflow = None
+    _analogV_treshold = None
+    _unit_type = None
+    _night_mode_timer = None
+    _party_mode_timer = None
+    _humidity_status = None
+
     def __init__(self, host, password="1111", fan_id="DEFAULT_DEVICEID", name="ecofanv2", port=4000 ):
         self._name = name
         self._host = host
@@ -171,12 +222,12 @@ class Fan(object):
             self._id = self.device_search
         self.update()
 
-    def search_devices (self):
+    def search_devices (self, addr = "0.0.0.0", port = 4000 ):
         payload="FDFD021044454641554c545f44455649434549440431313131017cf805"
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        sock.bind(("0.0.0.0", 4000))
+        sock.bind((addr, port))
         sock.settimeout(1.0)
         ips = []
         i = 10
@@ -184,8 +235,10 @@ class Fan(object):
             i = i - 1
             self._device_search = self._id
             if self._host is None:
-                self._host = "<broadcast>"
-            sock.sendto( bytes.fromhex(payload), (self._host, 4000))
+                self._host = '<broadcast>'
+            if self._port is None:
+                self._port = port
+            sock.sendto( bytes.fromhex(payload), (self._host, self._port))
             data, addr = sock.recvfrom(1024)
             self.parse_response(data)
             if self._device_search != "DEFAULT_DEVICEID":
