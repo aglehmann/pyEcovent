@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.9"
+__version__ = "0.9.10"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -465,6 +465,10 @@ class Fan(object):
     def name(self):
         return self._name
 
+    @name.setter
+    def name(self, name):
+        self._name = name
+
     @property
     def host(self):
         return self._host
@@ -496,6 +500,10 @@ class Fan(object):
     @property
     def port(self):
         return self._port
+
+    @port.setter
+    def port(self, port):
+        self._port = port
 
     @property
     def state(self):
