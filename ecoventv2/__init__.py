@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.8"
+__version__ = "0.9.9"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -170,7 +170,7 @@ class Fan(object):
     _relay_sensor_state = None
     _analogV_sensor_state = None
     _humidity_treshold = None
-    _battery_voltage = None
+    _battery_voltage = 0
     _humidity = None
     _analogV = None
     _relay_status = None
@@ -584,7 +584,7 @@ class Fan(object):
     @battery_voltage.setter
     def battery_voltage(self, input):
         val = int.from_bytes(int(input,16).to_bytes(2,'big'), byteorder='little', signed=False)
-        self._battery_voltage = str( val ) + " mV"        
+        self._battery_voltage = str( val ) + " mV"
 
     @property
     def humidity (self):
