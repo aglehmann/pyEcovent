@@ -1,9 +1,9 @@
-# pyEcovent
+# pyEcoventV2
 
 Python3 library for single-room energy recovery ventilators from Vents / Blauberg / Flexit
 
 ## Install
-	pip3 install pyEcovent
+	pip3 install pyEcoventV2
 
 ## Example usage
 	from ecovent import Fan
@@ -57,3 +57,7 @@ This library has only been tested on the following fans:
 Fans from Flexit are identical and should work, but this is not yet tested:
 - [Single room ventilator Roomie Dual](https://www.flexit.no/en/products/single_room_ventilator/single_room_ventilator_roomie_dual/single_room_ventilator_roomie_dual/)
 
+
+## Changelog
+- v 0.9.9.
+-- initialize _battery_voltage with 0 not None
