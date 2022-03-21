@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.10"
+__version__ = "0.9.11"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -206,6 +206,7 @@ class Fan(object):
     _night_mode_timer = None
     _party_mode_timer = None
     _humidity_status = None
+    _analogV_status = None
 
     def __init__(self, host, password="1111", fan_id="DEFAULT_DEVICEID", name="ecofanv2", port=4000 ):
         self._name = name
@@ -307,16 +308,16 @@ class Fan(object):
             payload = self.HEADER + payload + self.chksum(payload)
             response = self.socket.sendall( bytes.fromhex(payload))
             return response
-        except self.socket.timeout as err:
-            print ( "Connection timeout: " + self._host + " " + str(err) )
+        except:
+            print ( "Connection timeout: " + self._host )
             return None
 
     def receive(self):
         try:
             response = self.socket.recv(4096)
             return response
-        except socket.timeout as err:
-            print ( "Connection timeout: " + self._host + " " + str(err) )
+        except:
+            print ( "Connection timeout: " + self._host )
             return None
 
     def do_func (self, func, param, value="" ):
