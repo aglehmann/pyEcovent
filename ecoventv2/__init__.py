@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.11"
+__version__ = "0.9.12"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -116,29 +116,16 @@ class Fan(object):
         0x004a: [ 'fan1_speed', None ],
         0x004b: [ 'fan2_speed', None ],
         0x0064: [ 'filter_timer_countdown', None ],
-        0x0065: [ 'filter_timer_reset', None ],		# WRITE ONLY
         0x0066: [ 'boost_time', None ],
         0x006f: [ 'rtc_time', None ],
         0x0070: [ 'rtc_date', None ],
-        0x0072: [ 'weekly_schedule_state', states ],
-        0x0077: [ 'weekly_schedule_setup', None ],        
         0x007c: [ 'device_search', None ],
         0x007d: [ 'device_password', None ],
         0x007e: [ 'machine_hours', None ],
-        0x0080: [ 'reset_alarms', None ],	# WRITE ONLY
         0x0083: [ 'alarm_status', alarms ],
         0x0085: [ 'cloud_server_state', states ],
         0x0086: [ 'firmware', None ],
         0x0088: [ 'filter_replacement_status', statuses ],
-        0x0094: [ 'wifi_operation_mode', wifi_operation_modes  ],
-        0x0095: [ 'wifi_name' , None ],
-        0x0096: [ 'wifi_pasword', None ],
-        0x0099: [ 'wifi_enc_type', wifi_enc_types ],
-        0x009a: [ 'wifi_freq_chnnel', None ],
-        0x009b: [ 'wifi_dhcp', wifi_dhcps  ],
-        0x009c: [ 'wifi_assigned_ip', None ],
-        0x009d: [ 'wifi_assigned_netmask', None ],
-        0x009e: [ 'wifi_main_gateway', None ],
         0x00a3: [ 'curent_wifi_ip', None ],
         0x00b7: [ 'airflow' , airflows ],
         0x00b8: [ 'analogV_treshold', None ],
@@ -150,10 +137,22 @@ class Fan(object):
     }
 
     write_only_params = {
+        0x0065: [ 'filter_timer_reset', None ],		# WRITE ONLY
+#        0x0072: [ 'weekly_schedule_state', states ],
         0x0077: [ 'weekly_schedule_setup', None ],
+        0x0080: [ 'reset_alarms', None ],	# WRITE ONLY        
         0x0087: [ 'factory_reset', None ],
         0x00a0: [ 'wifi_apply_and_quit', None ],
         0x00a2: [ 'wifi_discard_and_quit', None ],
+        0x0094: [ 'wifi_operation_mode', wifi_operation_modes  ],
+        0x0095: [ 'wifi_name' , None ],
+        0x0096: [ 'wifi_pasword', None ],
+        0x0099: [ 'wifi_enc_type', wifi_enc_types ],
+        0x009a: [ 'wifi_freq_chnnel', None ],
+        0x009b: [ 'wifi_dhcp', wifi_dhcps  ],
+        0x009c: [ 'wifi_assigned_ip', None ],
+        0x009d: [ 'wifi_assigned_netmask', None ],
+        0x009e: [ 'wifi_main_gateway', None ],        
     }
 
     _name = None
@@ -229,7 +228,7 @@ class Fan(object):
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         sock.bind((addr, port))
-        sock.settimeout(1.0)
+        sock.settimeout(0.1)
         ips = []
         i = 10
         while ( i > 1 ):
@@ -251,13 +250,18 @@ class Fan(object):
 
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.settimeout(4)
-        try:
-            self.socket.connect((self._host, self._port))
-            return self.socket
-        except self.socket.timeout as err:
-            print ( "Connection timeout: " + self._host + " " + str(err) )
-            return None
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        self.socket.settimeout(0.1)
+        self._socket_connected = False
+        while not self._socket_connected:
+            try:
+                self.socket.connect((self._host, self._port))
+                return self.socket
+            except OSError:
+                self.socket.close()
+                print ("TUKAJ")
+                time.sleep(1)
 
     def str2hex(self,str_msg):
         return "".join("{:02x}".format(ord(c)) for c in str_msg)
@@ -308,17 +312,19 @@ class Fan(object):
             payload = self.HEADER + payload + self.chksum(payload)
             response = self.socket.sendall( bytes.fromhex(payload))
             return response
-        except:
-            print ( "Connection timeout: " + self._host )
+        except socket.timeout:
+            print ( "Connection timeout send: " + self._host )
             return None
 
     def receive(self):
         try:
-            response = self.socket.recv(4096)
+            response = self.socket.recv(1024)
+            self.socket.close()
             return response
-        except:
-            print ( "Connection timeout: " + self._host )
-            return None
+        except socket.timeout:
+            print ( "Connection timeout receive: " + self._host )
+            self.socket.close()
+            return ( False )
 
     def do_func (self, func, param, value="" ):
         out = ""
@@ -341,12 +347,17 @@ class Fan(object):
             parameter += n_out  + value
             if out == "0077":
                 value = ""
-        data = func + parameter 
-        self.send(data)
-        response = self.receive()
-        if response:
-            self.parse_response(response)
-            self.socket.close()
+        data = func + parameter
+        response = False
+        i = 0
+        while not response:
+            self.send(data)
+            response = self.receive()
+            i = i + 1
+            if response:
+                self.parse_response(response)
+            else:
+                print ("receive timeout: repeat " + str(i) )
 
     def update(self):
         request = "";

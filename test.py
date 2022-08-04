@@ -24,29 +24,41 @@ for addr in ips:
 
 
 
+
+
 #print (ips[0])
 # fan=Fan(ips[0], "1111" , "DEFAULT_DEVICEID" )
 #fan=Fan("10.94.0.108", "1111" , "DEFAULT_DEVICEID" )
 
 
-# fan.get_param( 'device_search' );
-# print ( 'fan_id: ' , fan.device_search ) ;
-# fan.id=fan.device_search ;
 
-# fan.set_man_speed(14);
-# fan.update();
-# print ( 'man_speed: ' + fan.man_speed )
-# man_speed = 5
-# fan.set_param('man_speed', hex(math.ceil( man_speed * 255 / 100 )).replace("0x","").zfill(2) ) # hex(math.ceil( speed_in_% * 255 / 100 )).replace("0x","").zfill(2)
-# print ( 'man_speed: ' + fan.man_speed )
+# fan.get_param( 'device_search' )
+# print ( 'fan_id: ' , fan.device_search )
+# fan.id=fan.device_search
+
+# for j in range(1, 301):
+#    print ( "Iteration: " + str(j) )
+#    fan.update()
+#    for i in ( fan.params ):
+#        if fan.params[i][0] in ['filter_timer_reset', 'reset_alarms']:
+#            continue
+#        attr = str(getattr(fan , fan.params[i][0]))
+#        print ( fan.params[i][0] + ": " + attr)
+
+
+# for i in range(0, 30):
+#    fan.set_man_speed(24);
+#    fan.update();
+#    print ( 'man_speed: ' + str(fan.man_speed) )
+#    man_speed = 
+#    fan.set_param('man_speed', hex(math.ceil( man_speed * 255 / 100 )).replace("0x","").zfill(2) ) # hex(math.ceil( speed_in_% * 255 / 100 )).replace("0x","").zfill(2)
+#    print ( 'man_speed: ' + str(fan.man_speed) )
 
 # fan.set_param('state','togle')
 
 # fan.set_param('state','off') #'on','off','togle'
 # fan.set_param('speed','manual') #'low','medium','high','manual'
 # print ( 'speed: ' + fan.speed )
-
-
 # print ( 'man_speed: ' + fan.man_speed )
 # print ( 'fan1_speed: ' + fan.fan1_speed )
 # print ( 'fan2_speed: ' + fan.fan2_speed )
@@ -122,7 +134,7 @@ for addr in ips:
 #fan.do_func(fan.func['read'] , "0305" )
 #print ( 'analogV_status: ' + fan.analogV_status ) 
 
-#for i in range (1,8):
+# for i in range (1,8):
 #    for j in range (1,5):
 #        fan.do_func(fan.func['read'] , "0077" , hex(i).replace("0x","").zfill(2) + hex(j).replace("0x","").zfill(2)) # value select schedule Day/Period
 #        print ( 'weekly_schedule_setup: ' + fan.weekly_schedule_setup ) 
