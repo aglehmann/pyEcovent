@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.12"
+__version__ = "0.9.13"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -220,7 +220,9 @@ class Fan(object):
         if self._id == "DEFAULT_DEVICEID":
             self.get_param( 'device_search' )
             self._id = self.device_search
-        self.update()
+        if not self._id:
+            return False
+        return self.update()
 
     def search_devices (self, addr = "0.0.0.0", port = 4000 ):
         payload="FDFD021044454641554c545f44455649434549440431313131017cf805"
@@ -260,7 +262,6 @@ class Fan(object):
                 return self.socket
             except OSError:
                 self.socket.close()
-                print ("TUKAJ")
                 time.sleep(1)
 
     def str2hex(self,str_msg):
@@ -313,7 +314,7 @@ class Fan(object):
             response = self.socket.sendall( bytes.fromhex(payload))
             return response
         except socket.timeout:
-            print ( "Connection timeout send: " + self._host )
+            print ( "Connection timeout send: " + self._host , file = sys.stderr )
             return None
 
     def receive(self):
@@ -322,7 +323,7 @@ class Fan(object):
             self.socket.close()
             return response
         except socket.timeout:
-            print ( "Connection timeout receive: " + self._host )
+            print ( "Connection timeout receive: " + self._host , file = sys.stderr )
             self.socket.close()
             return ( False )
 
@@ -350,20 +351,24 @@ class Fan(object):
         data = func + parameter
         response = False
         i = 0
-        while not response:
+        while not response and i < 10 :
             self.send(data)
             response = self.receive()
-            i = i + 1
             if response:
                 self.parse_response(response)
+                return True
             else:
-                print ("receive timeout: repeat " + str(i) )
+                i = i + 1
+                print ("receive timeout: repeat " + str(i) , file = sys.stderr )
+                time.sleep(1)
+        print ("receive timeout: bail out after " + str(i) + " retries" , file = sys.stderr )
+        return False
 
     def update(self):
         request = "";
         for param in self.params:
             request += hex(param).replace("0x","").zfill(4)
-        self.do_func(self.func['read'], request)
+        return self.do_func(self.func['read'], request)
 
     def set_param ( self, param, value ):
         valpar = self.get_params_values (param, value)

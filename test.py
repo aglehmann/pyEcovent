@@ -13,18 +13,14 @@ print ( ips )
 for addr in ips:
     print ( addr ) 
     fan=Fan(addr, "1111" , "DEFAULT_DEVICEID" )
-    fan.init_device()
-    fan.update();
-    # Print out all readable parameters
-    for i in ( fan.params ):
-        if fan.params[i][0] in ['filter_timer_reset', 'reset_alarms']:
-            continue
-        attr = str(getattr(fan , fan.params[i][0]))
-        print ( fan.params[i][0] + ": " + attr)
-
-
-
-
+    if fan.init_device():
+        fan.update();
+        # Print out all readable parameters
+        for i in ( fan.params ):
+            if fan.params[i][0] in ['filter_timer_reset', 'reset_alarms']:
+                continue
+            attr = str(getattr(fan , fan.params[i][0]))
+            print ( fan.params[i][0] + ": " + attr)
 
 #print (ips[0])
 # fan=Fan(ips[0], "1111" , "DEFAULT_DEVICEID" )
