@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.14"
+__version__ = "0.9.15"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -246,7 +246,7 @@ class Fan(object):
             if self._device_search != "DEFAULT_DEVICEID":
                 ips.append(addr[0])
                 ips=list(set(ips))
-            time.sleep(0.1)
+            # time.sleep(0.1)
         sock.close()
         return ips
 
@@ -361,7 +361,7 @@ class Fan(object):
             if i >= 10:
                 print ("EcoventV2: Timeout device: " + self._host + " bail out after " + str(i) + " retries" , file = sys.stderr )
                 return False
-            time.sleep(0.1)
+            # time.sleep(0.1)
 
     def update(self):
         request = "";
