@@ -1,5 +1,5 @@
 """ Version  """
-__version__ = "0.9.13"
+__version__ = "0.9.14"
 
 """Library to handle communication with Wifi ecofan from TwinFresh / Blauberg"""
 import socket
@@ -262,7 +262,7 @@ class Fan(object):
                 return self.socket
             except OSError:
                 self.socket.close()
-                time.sleep(1)
+                return None
 
     def str2hex(self,str_msg):
         return "".join("{:02x}".format(ord(c)) for c in str_msg)
@@ -314,7 +314,7 @@ class Fan(object):
             response = self.socket.sendall( bytes.fromhex(payload))
             return response
         except socket.timeout:
-            print ( "Connection timeout send: " + self._host , file = sys.stderr )
+            # print ( "EcoventV2: Connection timeout send to device: " + self._host , file = sys.stderr )
             return None
 
     def receive(self):
@@ -323,7 +323,7 @@ class Fan(object):
             self.socket.close()
             return response
         except socket.timeout:
-            print ( "Connection timeout receive: " + self._host , file = sys.stderr )
+            # print ( "EcoventV2: Connection timeout receive from device: " + self._host , file = sys.stderr )
             self.socket.close()
             return ( False )
 
@@ -351,18 +351,17 @@ class Fan(object):
         data = func + parameter
         response = False
         i = 0
-        while not response and i < 10 :
+        while not response:
+            i = i + 1
             self.send(data)
             response = self.receive()
             if response:
                 self.parse_response(response)
                 return True
-            else:
-                i = i + 1
-                print ("receive timeout: repeat " + str(i) , file = sys.stderr )
-                time.sleep(1)
-        print ("receive timeout: bail out after " + str(i) + " retries" , file = sys.stderr )
-        return False
+            if i >= 10:
+                print ("EcoventV2: Timeout device: " + self._host + " bail out after " + str(i) + " retries" , file = sys.stderr )
+                return False
+            time.sleep(0.1)
 
     def update(self):
         request = "";
