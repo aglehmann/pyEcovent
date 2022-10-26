@@ -78,7 +78,8 @@ class Fan(object):
     unit_types = {
                     0x0300: 'Vento Expert A50-1/A85-1/A100-1 W V.2', 
                     0x0400: 'Vento Expert Duo A30-1 W V.2', 
-                    0x0500: 'Vento Expert A30 W V.2' }
+                    0x0500: 'Vento Expert A30 W V.2',
+                    0x0e00: 'Oxxify smart 50' }
 
     wifi_operation_modes = {
         1: 'client' ,
@@ -671,8 +672,13 @@ class Fan(object):
 
     @filter_timer_countdown.setter
     def filter_timer_countdown(self, input ):
-        val = int(input,16).to_bytes(3,'big')
-        self._filter_timer_countdown = str ( val[2] ) + "d " +str ( val[1] ) + "h " + str ( val[0] ) + "m " 
+        if len(input) == 8:
+          # Oxxify smart 50 delivers 4 bytes which is not conform to the documentation, four bytes are delivered - like machine hours
+          val = int(input,16).to_bytes(4,'big')
+          self._filter_timer_countdown = str ( int.from_bytes(val[2:3],'big') ) + "d " + str ( val[1] ) + "h " +str ( val[0] ) + "m "
+        else:
+          val = int(input,16).to_bytes(3,'big')
+          self._filter_timer_countdown = str ( val[2] ) + "d " +str ( val[1] ) + "h " + str ( val[0] ) + "m " 
 
     @property
     def boost_time (self):
